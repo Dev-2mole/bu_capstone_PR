@@ -53,8 +53,9 @@ def git_commit():
         else:
             messagebox.showerror("Error", "Commit failed.\n" + result.stderr)
 
-def git_push(branch):
+def git_push(branch_combobox):
     global folder_selected
+    branch = branch_combobox.get()
     if not branch:
         messagebox.showwarning("Warning", "No branch selected for push.")
         return
@@ -66,6 +67,7 @@ def git_push(branch):
             messagebox.showerror("Error", f"Push failed:\n{result.stderr}")
     except Exception as e:
         messagebox.showerror("Error", f"Failed to push: {e}")
+
 
 def browse_files(listbox, text_area, branch_combobox):
     global folder_selected
@@ -107,6 +109,7 @@ def display_file_content(event, text_area):
         text_area.insert(END, content)
 
 def main():
+    global branch_combobox
     root = Tk()
     root.title("Git Helper")
 
@@ -124,16 +127,18 @@ def main():
 
     branch_label = Label(button_frame, text="Branch:")
     branch_label.pack(side=LEFT)
-    branch_combobox = ttk.Combobox(button_frame, width=15)
+
+    branch_combobox = ttk.Combobox(button_frame, width=15)  # branch_combobox 초기화
     branch_combobox.pack(side=LEFT, padx=5)
-    Button(button_frame, text="Git push", command=lambda: git_push(branch_combobox.get())).pack(side=LEFT)
+    
 
     Button(button_frame, text="Open Folder", command=lambda: browse_files(listbox, text_area, branch_combobox)).pack(side=LEFT)
     Button(button_frame, text="Install pre-commit", command=install_pre_commit_hook).pack(side=LEFT)
     Button(button_frame, text="Git Add", command=git_add).pack(side=LEFT)
     Button(button_frame, text="Git Commit", command=git_commit).pack(side=LEFT)
-    Button(button_frame, text="Git push", command=git_push).pack(side=LEFT)
+    Button(button_frame, text="Git push", command=lambda: git_push(branch_combobox)).pack(side=LEFT)
 
+    # Button(button_frame, text="Git push", command=lambda: git_push(branch_combobox.get())).pack(side=LEFT)
     root.mainloop()
 
 if __name__ == "__main__":
